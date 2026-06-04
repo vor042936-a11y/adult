@@ -40,7 +40,7 @@ export function parseVideoUrl(url: string, customThumbnail?: string): { thumbnai
 
   // Default fallback if no thumbnail is provided
   if (!thumbnail) {
-    thumbnail = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%231a0e30" /><stop offset="100%" stop-color="%230b0518" /></linearGradient></defs><rect width="640" height="360" fill="url(%23g)"/><polygon points="290,150 290,210 350,180" fill="%23a855f7" /><text x="50%" y="70%" fill="%23a855f7" font-family="sans-serif" font-size="16" text-anchor="middle" opacity="0.8">Premium Video Playback</text></svg>';
+    thumbnail = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iMzYwIiB2aWV3Qm94PSIwIDAgNjQwIDM2MCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMWEwZTMwIiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwYjA1MTgiIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iNjQwIiBoZWlnaHQ9IjM2MCIgZmlsbD0idXJsKCNnKSIvPgogIDxwb2x5Z29uIHBvaW50cz0iMjkwLDE1MCAyOTAsMjEwIDM1MCwxODAiIGZpbGw9IiNhODU1ZjciIC8+CiAgPHRleHQgeD0iNTAlIiB5PSI3MCUiIGZpbGw9IiNhODU1ZjciIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBvcGFjaXR5PSIwLjgiPlByZW1pdW0gVmlkZW8gUGxheWJhY2s8L3RleHQ+Cjwvc3ZnPg==';
   }
 
   return { thumbnail, type };

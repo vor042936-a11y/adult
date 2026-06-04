@@ -491,7 +491,7 @@ export default function AdminPanel({ onClose, onRefreshData, videos, ads, dbStat
                           alt="Thumbnail preview"
                           className="preview-img-box" 
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="170"><rect width="300" height="170" fill="%231a1a2e"/><text x="50%" y="50%" fill="%23a855f7" text-anchor="middle">Broken Custom Image Link</text></svg>';
+                            (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMTcwIj4KICA8cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE3MCIgZmlsbD0iIzFhMWEyZSIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmaWxsPSIjYTg1NWY3IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1hZ2UgTGluayBOb3QgTG9hZGFibGU8L3RleHQ+Cjwvc3ZnPg==';
                           }}
                         />
                       </div>
