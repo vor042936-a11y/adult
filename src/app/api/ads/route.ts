@@ -15,8 +15,12 @@ export async function GET() {
     const ads = await getAds();
     const dbStatus = getDbConnectionStatus();
     return NextResponse.json({ ads, dbStatus });
-  } catch (err) {
-    return NextResponse.json({ error: 'Failed to fetch ads' }, { status: 500 });
+  } catch (err: any) {
+    console.error('GET /api/ads error:', err);
+    return NextResponse.json({ 
+      error: `Failed to fetch ads: ${err?.message || String(err)}`,
+      dbStatus: getDbConnectionStatus()
+    }, { status: 500 });
   }
 }
 
@@ -35,8 +39,8 @@ export async function POST(request: Request) {
 
     const ad = await updateAds(placement, code || '');
     return NextResponse.json(ad);
-  } catch (err) {
+  } catch (err: any) {
     console.error('POST /api/ads error:', err);
-    return NextResponse.json({ error: 'Failed to update ads' }, { status: 500 });
+    return NextResponse.json({ error: `Failed to update ads: ${err?.message || String(err)}` }, { status: 500 });
   }
 }

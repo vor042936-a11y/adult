@@ -14,8 +14,9 @@ export async function GET() {
   try {
     const videos = await getVideos();
     return NextResponse.json(videos);
-  } catch (err) {
-    return NextResponse.json({ error: 'Failed to fetch videos' }, { status: 500 });
+  } catch (err: any) {
+    console.error('GET /api/videos error:', err);
+    return NextResponse.json({ error: `Failed to fetch videos: ${err?.message || String(err)}` }, { status: 500 });
   }
 }
 
@@ -34,9 +35,9 @@ export async function POST(request: Request) {
 
     const video = await addVideo({ title, description: description || '', url, category }, customThumbnail);
     return NextResponse.json(video);
-  } catch (err) {
+  } catch (err: any) {
     console.error('POST /api/videos error:', err);
-    return NextResponse.json({ error: 'Failed to add video' }, { status: 500 });
+    return NextResponse.json({ error: `Failed to add video: ${err?.message || String(err)}` }, { status: 500 });
   }
 }
 
@@ -58,8 +59,8 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ success: true });
     }
     return NextResponse.json({ error: 'Video not found' }, { status: 404 });
-  } catch (err) {
+  } catch (err: any) {
     console.error('DELETE /api/videos error:', err);
-    return NextResponse.json({ error: 'Failed to delete video' }, { status: 500 });
+    return NextResponse.json({ error: `Failed to delete video: ${err?.message || String(err)}` }, { status: 500 });
   }
 }
