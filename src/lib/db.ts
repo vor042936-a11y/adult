@@ -145,13 +145,8 @@ function writeLocalData(data: { videos: Video[]; ads: AdPlacement[] }) {
 // Database Operations Core
 export async function getVideos(): Promise<Video[]> {
   if (isSupabaseConfigured()) {
-    try {
-      // Fetch from Supabase
-      const data = await supabaseFetch('videos?select=*&order=createdAt.desc');
-      return data;
-    } catch (e) {
-      console.error('Failed to get videos from Supabase, falling back to local/memory', e);
-    }
+    const data = await supabaseFetch('videos?select=*&order=createdAt.desc');
+    return data;
   }
 
   const data = readLocalData();
@@ -170,15 +165,11 @@ export async function addVideo(videoData: Omit<Video, 'id' | 'createdAt' | 'thum
   };
 
   if (isSupabaseConfigured()) {
-    try {
-      const inserted = await supabaseFetch('videos', {
-        method: 'POST',
-        body: JSON.stringify(newVideo)
-      });
-      return inserted[0] || newVideo;
-    } catch (e) {
-      console.error('Failed to save to Supabase, saving locally/memory instead', e);
-    }
+    const inserted = await supabaseFetch('videos', {
+      method: 'POST',
+      body: JSON.stringify(newVideo)
+    });
+    return inserted[0] || newVideo;
   }
 
   const data = readLocalData();
@@ -189,14 +180,10 @@ export async function addVideo(videoData: Omit<Video, 'id' | 'createdAt' | 'thum
 
 export async function deleteVideo(id: string): Promise<boolean> {
   if (isSupabaseConfigured()) {
-    try {
-      await supabaseFetch(`videos?id=eq.${id}`, {
-        method: 'DELETE'
-      });
-      return true;
-    } catch (e) {
-      console.error('Failed to delete in Supabase, deleting locally/memory instead', e);
-    }
+    await supabaseFetch(`videos?id=eq.${id}`, {
+      method: 'DELETE'
+    });
+    return true;
   }
 
   const data = readLocalData();
@@ -211,20 +198,16 @@ export async function deleteVideo(id: string): Promise<boolean> {
 
 export async function getAds(): Promise<AdPlacement[]> {
   if (isSupabaseConfigured()) {
-    try {
-      const data = await supabaseFetch('ads?select=*');
-      // If table is empty in supabase, seed it
-      if (data.length === 0) {
-        await supabaseFetch('ads', {
-          method: 'POST',
-          body: JSON.stringify(INITIAL_ADS)
-        });
-        return INITIAL_ADS;
-      }
-      return data;
-    } catch (e) {
-      console.error('Failed to get ads from Supabase, falling back to local/memory', e);
+    const data = await supabaseFetch('ads?select=*');
+    // If table is empty in supabase, seed it
+    if (data.length === 0) {
+      await supabaseFetch('ads', {
+        method: 'POST',
+        body: JSON.stringify(INITIAL_ADS)
+      });
+      return INITIAL_ADS;
     }
+    return data;
   }
 
   const data = readLocalData();
@@ -237,15 +220,11 @@ export async function getAds(): Promise<AdPlacement[]> {
 
 export async function updateAds(placement: string, code: string): Promise<AdPlacement> {
   if (isSupabaseConfigured()) {
-    try {
-      const updated = await supabaseFetch(`ads?placement=eq.${placement}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ code })
-      });
-      return updated[0] || { id: placement, placement, code };
-    } catch (e) {
-      console.error('Failed to update ads in Supabase, updating locally/memory instead', e);
-    }
+    const updated = await supabaseFetch(`ads?placement=eq.${placement}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ code })
+    });
+    return updated[0] || { id: placement, placement, code };
   }
 
   const data = readLocalData();
