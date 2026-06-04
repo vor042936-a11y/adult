@@ -1578,3 +1578,45 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
   }
 }
+
+/* Custom form elements for Metadata scraper */
+.input-with-button {
+  display: flex;
+  gap: 10px;
+}
+
+.input-with-button input {
+  flex: 1;
+}
+
+.inline-action-btn {
+  padding: 0 18px;
+  background: rgba(147, 51, 234, 0.15);
+  border: 1px solid var(--border-glass-hover);
+  border-radius: 8px;
+  color: var(--primary-light);
+  font-family: var(--font-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.inline-action-btn:hover:not(:disabled) {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 0 10px var(--primary-glow);
+}
+
+.inline-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.spinner-icon {
+  animation: spin 1s linear infinite;
+}

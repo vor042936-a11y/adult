@@ -35,6 +35,7 @@ export default function AdminPanel({ onClose, onRefreshData, videos, ads, dbStat
   const [videoFormSuccess, setVideoFormSuccess] = useState('');
   const [videoFormError, setVideoFormError] = useState('');
   const [isSubmittingVideo, setIsSubmittingVideo] = useState(false);
+  const [isFetchingMetadata, setIsFetchingMetadata] = useState(false);
 
   // Ads Form states
   const [adHeader, setAdHeader] = useState('');
@@ -105,6 +106,39 @@ export default function AdminPanel({ onClose, onRefreshData, videos, ads, dbStat
   const handleLogout = () => {
     setToken(null);
     sessionStorage.removeItem('admin_token');
+  };
+
+  // Handle Metadata Auto-Fill
+  const handleFetchMetadata = async () => {
+    if (!videoUrl) {
+      setVideoFormError('Please enter a Video URL first.');
+      return;
+    }
+
+    setIsFetchingMetadata(true);
+    setVideoFormSuccess('');
+    setVideoFormError('');
+
+    try {
+      const res = await fetch(`/api/metadata?url=${encodeURIComponent(videoUrl)}`);
+      const data = await res.json();
+
+      if (res.ok) {
+        if (data.title) {
+          setVideoTitle(data.title);
+        }
+        if (data.thumbnail) {
+          setCustomThumbnail(data.thumbnail);
+        }
+        setVideoFormSuccess('Metadata auto-filled successfully!');
+      } else {
+        setVideoFormError(data.error || 'Failed to auto-fetch details from site.');
+      }
+    } catch (err) {
+      setVideoFormError('Could not connect to the metadata crawler API.');
+    } finally {
+      setIsFetchingMetadata(false);
+    }
   };
 
   // Handle Add Video
@@ -380,13 +414,28 @@ export default function AdminPanel({ onClose, onRefreshData, videos, ads, dbStat
 
                 <div className="form-group">
                   <label>Video URL * (YouTube, Vimeo, Dailymotion, MP4, HLS)</label>
-                  <input
-                    type="url"
-                    value={videoUrl}
-                    onChange={e => setVideoUrl(e.target.value)}
-                    placeholder="https://www.youtube.com/watch?v=..."
-                    required
-                  />
+                  <div className="input-with-button">
+                    <input
+                      type="url"
+                      value={videoUrl}
+                      onChange={e => setVideoUrl(e.target.value)}
+                      placeholder="https://www.youtube.com/watch?v=..."
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="inline-action-btn"
+                      onClick={handleFetchMetadata}
+                      disabled={isFetchingMetadata}
+                      title="Fetch Title and Thumbnail automatically from page"
+                    >
+                      {isFetchingMetadata ? (
+                        <RefreshCw className="spinner-icon" size={16} />
+                      ) : (
+                        'Auto-Fill'
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="form-row">
