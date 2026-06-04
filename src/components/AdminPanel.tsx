@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Plus, Trash2, Eye, Shield, Key, Settings, Video, FileText, Sparkles, CheckCircle2, AlertCircle, RefreshCw, LogOut, Database
 } from 'lucide-react';
-import { parseVideoUrl } from '@/lib/videoParser';
+import { parseVideoUrl, getProxiedThumbnailUrl } from '@/lib/videoParser';
 
 interface AdminPanelProps {
   onClose: () => void;
@@ -487,7 +487,7 @@ export default function AdminPanel({ onClose, onRefreshData, videos, ads, dbStat
                       <div className="preview-thumbnail-container">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img 
-                          src={urlPreview.thumbnail} 
+                          src={getProxiedThumbnailUrl(urlPreview.thumbnail)} 
                           alt="Thumbnail preview"
                           className="preview-img-box" 
                           onError={(e) => {
@@ -529,7 +529,7 @@ export default function AdminPanel({ onClose, onRefreshData, videos, ads, dbStat
                       <div key={v.id} className="admin-video-item">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img 
-                          src={v.thumbnail} 
+                          src={getProxiedThumbnailUrl(v.thumbnail)} 
                           alt="" 
                           className="item-thumbnail" 
                         />

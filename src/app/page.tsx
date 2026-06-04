@@ -9,6 +9,7 @@ import Footer from '@/components/Footer';
 import VideoPlayer from '@/components/VideoPlayer';
 import AdContainer from '@/components/AdContainer';
 import AdminPanel from '@/components/AdminPanel';
+import { getProxiedThumbnailUrl } from '@/lib/videoParser';
 
 export default function Home() {
   // Global Data States
@@ -192,7 +193,7 @@ export default function Home() {
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img 
-                          src={video.thumbnail} 
+                          src={getProxiedThumbnailUrl(video.thumbnail)} 
                           alt="" 
                           className="playlist-thumb" 
                         />
@@ -236,7 +237,7 @@ export default function Home() {
                     <div className="card-thumb-wrapper">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img 
-                        src={video.thumbnail} 
+                        src={getProxiedThumbnailUrl(video.thumbnail)} 
                         alt={video.title} 
                         className="card-thumb"
                       />

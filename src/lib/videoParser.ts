@@ -45,3 +45,26 @@ export function parseVideoUrl(url: string, customThumbnail?: string): { thumbnai
 
   return { thumbnail, type };
 }
+
+// Helper to proxy external hotlink-protected thumbnail images
+export function getProxiedThumbnailUrl(thumbnailUrl: string): string {
+  if (!thumbnailUrl) return '';
+
+  // Return base64/data URIs as-is
+  if (thumbnailUrl.startsWith('data:')) {
+    return thumbnailUrl;
+  }
+
+  // YouTube allows hotlinking
+  if (thumbnailUrl.includes('youtube.com') || thumbnailUrl.includes('youtu.be') || thumbnailUrl.includes('img.youtube.com')) {
+    return thumbnailUrl;
+  }
+
+  // Vimeo thumbnails (vumbnail) allow hotlinking
+  if (thumbnailUrl.includes('vumbnail.com')) {
+    return thumbnailUrl;
+  }
+
+  // Route other external CDNs through our server-side referer spoofer proxy
+  return `/api/proxy?url=${encodeURIComponent(thumbnailUrl)}`;
+}
