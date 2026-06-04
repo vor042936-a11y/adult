@@ -17,8 +17,12 @@ export async function GET() {
     return NextResponse.json({ ads, dbStatus });
   } catch (err: any) {
     console.error('GET /api/ads error:', err);
+    let msg = err?.message || String(err);
+    if (err?.cause) {
+      msg += ` (Cause: ${err.cause.message || err.cause.code || String(err.cause)})`;
+    }
     return NextResponse.json({ 
-      error: `Failed to fetch ads: ${err?.message || String(err)}`,
+      error: `Failed to fetch ads: ${msg}`,
       dbStatus: getDbConnectionStatus()
     }, { status: 500 });
   }
@@ -41,6 +45,10 @@ export async function POST(request: Request) {
     return NextResponse.json(ad);
   } catch (err: any) {
     console.error('POST /api/ads error:', err);
-    return NextResponse.json({ error: `Failed to update ads: ${err?.message || String(err)}` }, { status: 500 });
+    let msg = err?.message || String(err);
+    if (err?.cause) {
+      msg += ` (Cause: ${err.cause.message || err.cause.code || String(err.cause)})`;
+    }
+    return NextResponse.json({ error: `Failed to update ads: ${msg}` }, { status: 500 });
   }
 }

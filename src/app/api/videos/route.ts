@@ -16,7 +16,11 @@ export async function GET() {
     return NextResponse.json(videos);
   } catch (err: any) {
     console.error('GET /api/videos error:', err);
-    return NextResponse.json({ error: `Failed to fetch videos: ${err?.message || String(err)}` }, { status: 500 });
+    let msg = err?.message || String(err);
+    if (err?.cause) {
+      msg += ` (Cause: ${err.cause.message || err.cause.code || String(err.cause)})`;
+    }
+    return NextResponse.json({ error: `Failed to fetch videos: ${msg}` }, { status: 500 });
   }
 }
 
@@ -37,7 +41,11 @@ export async function POST(request: Request) {
     return NextResponse.json(video);
   } catch (err: any) {
     console.error('POST /api/videos error:', err);
-    return NextResponse.json({ error: `Failed to add video: ${err?.message || String(err)}` }, { status: 500 });
+    let msg = err?.message || String(err);
+    if (err?.cause) {
+      msg += ` (Cause: ${err.cause.message || err.cause.code || String(err.cause)})`;
+    }
+    return NextResponse.json({ error: `Failed to add video: ${msg}` }, { status: 500 });
   }
 }
 
@@ -61,6 +69,10 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: 'Video not found' }, { status: 404 });
   } catch (err: any) {
     console.error('DELETE /api/videos error:', err);
-    return NextResponse.json({ error: `Failed to delete video: ${err?.message || String(err)}` }, { status: 500 });
+    let msg = err?.message || String(err);
+    if (err?.cause) {
+      msg += ` (Cause: ${err.cause.message || err.cause.code || String(err.cause)})`;
+    }
+    return NextResponse.json({ error: `Failed to delete video: ${msg}` }, { status: 500 });
   }
 }
