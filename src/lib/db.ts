@@ -74,17 +74,29 @@ import { parseVideoUrl } from './videoParser';
 let memoryVideos: Video[] = [...INITIAL_VIDEOS];
 let memoryAds: AdPlacement[] = [...INITIAL_ADS];
 
+// Sanitized getters to prevent copy-paste whitespace or trailing slash errors
+const getSupabaseUrl = () => {
+  return process.env.SUPABASE_URL?.trim().replace(/\/$/, '') || '';
+};
+
+const getSupabaseKey = () => {
+  return process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() || '';
+};
+
 // Check environment variables for DB configurations
 const isSupabaseConfigured = () => {
-  return !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+  return !!(getSupabaseUrl() && getSupabaseKey());
 };
 
 // Supabase Direct REST Helpers
 async function supabaseFetch(path: string, options: RequestInit = {}) {
-  const url = `${process.env.SUPABASE_URL}/rest/v1/${path}`;
+  const supabaseUrl = getSupabaseUrl();
+  const supabaseKey = getSupabaseKey();
+  
+  const url = `${supabaseUrl}/rest/v1/${path}`;
   const headers = {
-    'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-    'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+    'apikey': supabaseKey,
+    'Authorization': `Bearer ${supabaseKey}`,
     'Content-Type': 'application/json',
     'Prefer': 'return=representation',
     ...options.headers,
