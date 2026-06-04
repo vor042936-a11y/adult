@@ -6,18 +6,12 @@ import { Search, Settings, Film, Sparkles } from 'lucide-react';
 interface HeaderProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  selectedCategory: string;
-  setSelectedCategory: (category: string) => void;
   onOpenAdmin: () => void;
 }
-
-const CATEGORIES = ['All', 'Trending', 'Animation', 'Cinematic', 'Sci-Fi', 'Action', 'Music', 'Comedy'];
 
 export default function Header({ 
   searchQuery, 
   setSearchQuery, 
-  selectedCategory, 
-  setSelectedCategory, 
   onOpenAdmin 
 }: HeaderProps) {
   return (
@@ -56,21 +50,6 @@ export default function Header({
             <Settings size={16} />
             <span>Dashboard</span>
           </button>
-        </div>
-      </div>
-
-      {/* Category Pills Navigation */}
-      <div className="categories-bar-wrapper">
-        <div className="categories-container">
-          {CATEGORIES.map((category) => (
-            <button
-              key={category}
-              className={`category-pill ${selectedCategory === category ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(category)}
-            >
-              {category}
-            </button>
-          ))}
         </div>
       </div>
     </header>

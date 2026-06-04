@@ -148,11 +148,34 @@ export default function AdminPanel({ onClose, onRefreshData, videos, ads, dbStat
     setVideoFormError('');
     setIsSubmittingVideo(true);
 
-    if (!videoTitle || !videoUrl || !videoCategory) {
-      setVideoFormError('All fields marked * are required.');
+    if (!videoUrl) {
+      setVideoFormError('Video URL is required.');
       setIsSubmittingVideo(false);
       return;
     }
+
+    let finalTitle = videoTitle.trim();
+    if (!finalTitle) {
+      try {
+        const urlObj = new URL(videoUrl);
+        const filename = urlObj.pathname.split('/').pop() || '';
+        const rawSlug = decodeURIComponent(filename)
+          .replace(/\.[^/.]+$/, "")
+          .replace(/[-_]+/g, ' ')
+          .trim();
+        
+        if (rawSlug) {
+          finalTitle = rawSlug.split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+        }
+      } catch (err) {}
+      if (!finalTitle) {
+        finalTitle = 'Untitled Video ' + Math.random().toString(36).substring(2, 6).toUpperCase();
+      }
+    }
+
+    const finalCategory = videoCategory || 'General';
 
     try {
       const res = await fetch('/api/videos', {
@@ -162,10 +185,10 @@ export default function AdminPanel({ onClose, onRefreshData, videos, ads, dbStat
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          title: videoTitle,
+          title: finalTitle,
           url: videoUrl,
           description: videoDesc,
-          category: videoCategory,
+          category: finalCategory,
           customThumbnail: customThumbnail || undefined
         }),
       });

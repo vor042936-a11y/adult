@@ -18,12 +18,11 @@ export default function Home() {
   const [dbStatus, setDbStatus] = useState<any>({ connected: false, provider: 'Connecting...' });
   const [isLoading, setIsLoading] = useState(true);
 
-  // Active Playback State
+  // Active Playback State (for pop-up player modal)
   const [activeVideo, setActiveVideo] = useState<any>(null);
 
-  // Search & Navigation States
+  // Search Navigation State
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
 
   // Modals & Panels State
   const [showAdmin, setShowAdmin] = useState(false);
@@ -43,11 +42,6 @@ export default function Home() {
       if (videosRes.ok) {
         const videosData = await videosRes.json();
         setVideos(videosData);
-        
-        // If there's no active video yet, default to the first video
-        if (videosData.length > 0 && !activeVideo) {
-          setActiveVideo(videosData[0]);
-        }
       }
 
       // Fetch ads and connection status
@@ -62,16 +56,15 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  }, [activeVideo]);
+  }, []);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  // Handle active video change and scroll to top
+  // Open video player pop-up modal
   const handleSelectVideo = (video: any) => {
     setActiveVideo(video);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Get specific ad script codes
@@ -90,17 +83,12 @@ export default function Home() {
     setTimeout(() => setContactSuccess(false), 5000);
   };
 
-  // Filter videos based on category and search query
+  // Filter videos based on search query
   const filteredVideos = videos.filter((video) => {
-    const matchesCategory = selectedCategory === 'All' || video.category === selectedCategory;
     const matchesSearch = video.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           (video.description && video.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCategory && matchesSearch;
+    return matchesSearch;
   });
-
-  // Exclude current playing video for the sidebar playlist
-  const sidebarPlaylist = videos.filter(v => activeVideo && v.id !== activeVideo.id)
-    .filter(v => selectedCategory === 'All' || v.category === selectedCategory);
 
   return (
     <div className="app-container">
@@ -111,8 +99,6 @@ export default function Home() {
       <Header
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
         onOpenAdmin={() => setShowAdmin(true)}
       />
 
@@ -127,7 +113,7 @@ export default function Home() {
         {isLoading ? (
           <div className="player-loading-placeholder glass-panel" style={{ height: '400px' }}>
             <div className="spinner"></div>
-            <p>Loading Platform Videos...</p>
+            <p>Loading Videos...</p>
           </div>
         ) : videos.length === 0 ? (
           <div className="player-error-placeholder glass-panel" style={{ minHeight: '300px' }}>
@@ -140,91 +126,16 @@ export default function Home() {
           </div>
         ) : (
           <>
-            {/* Active Video Player & Playlist Sidebar */}
-            <div className="hero-layout">
-              {/* Player Area */}
-              <div className="player-section glass-panel">
-                {activeVideo && (
-                  <>
-                    <VideoPlayer 
-                      url={activeVideo.url} 
-                      onEnded={() => {
-                        // Play next video in queue if available
-                        if (sidebarPlaylist.length > 0) {
-                          setActiveVideo(sidebarPlaylist[0]);
-                        }
-                      }}
-                    />
-                    
-                    <div className="active-video-details">
-                      <span className="active-video-category">{activeVideo.category}</span>
-                      <h2>{activeVideo.title}</h2>
-                      {activeVideo.description && <p>{activeVideo.description}</p>}
-                    </div>
-                  </>
-                )}
-
-                {/* Banner Ad below the Video Player */}
-                <AdContainer 
-                  code={getAdCode('ad_under_player')} 
-                  placement="ad_under_player" 
-                  placeholderText="Under Player Ad Banner (468x60)"
-                />
-              </div>
-
-              {/* Sidebar Up Next Playlist */}
-              <div className="playlist-section glass-panel">
-                <h3>
-                  <Sparkles size={16} className="text-accent" />
-                  Up Next {selectedCategory !== 'All' ? `in ${selectedCategory}` : ''}
-                </h3>
-                
-                <div className="playlist-scroll">
-                  {sidebarPlaylist.length === 0 ? (
-                    <div className="empty-list" style={{ padding: '20px 10px' }}>
-                      No other videos in this section.
-                    </div>
-                  ) : (
-                    sidebarPlaylist.slice(0, 8).map((video) => (
-                      <div 
-                        key={video.id} 
-                        className="playlist-card"
-                        onClick={() => handleSelectVideo(video)}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img 
-                          src={getProxiedThumbnailUrl(video.thumbnail)} 
-                          alt="" 
-                          className="playlist-thumb" 
-                        />
-                        <div className="playlist-info">
-                          <span className="playlist-title">{video.title}</span>
-                          <span className="playlist-category">{video.category}</span>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-
-                {/* Sidebar Rectangle Banner Ad */}
-                <AdContainer 
-                  code={getAdCode('ad_sidebar')} 
-                  placement="ad_sidebar" 
-                  placeholderText="Sidebar Rectangle Ad (300x250)"
-                />
-              </div>
-            </div>
-
             {/* Video Cards Grid */}
             <div className="grid-section-header">
-              <h2>More Premium Streams</h2>
+              <h2>Featured Streams</h2>
               {searchQuery && <span className="playlist-category">Search results for: "{searchQuery}"</span>}
             </div>
 
             {filteredVideos.length === 0 ? (
               <div className="player-error-placeholder glass-panel" style={{ minHeight: '200px' }}>
                 <p className="error-title">No Results Found</p>
-                <p className="error-desc">We couldn't find any videos matching your search terms or category criteria.</p>
+                <p className="error-desc">We couldn't find any videos matching your search terms.</p>
               </div>
             ) : (
               <div className="video-grid">
@@ -241,7 +152,6 @@ export default function Home() {
                         alt={video.title} 
                         className="card-thumb"
                       />
-                      <span className="card-badge">{video.category}</span>
                       <div className="play-hover-overlay">
                         <div className="play-hover-btn">
                           <Play className="play-hover-icon" />
@@ -271,6 +181,33 @@ export default function Home() {
           ads={ads}
           dbStatus={dbStatus}
         />
+      )}
+
+      {/* Lightbox Video Player Modal Overlay (Pop-up Player) */}
+      {activeVideo && (
+        <div className="modal-backdrop player-modal-backdrop" onClick={() => setActiveVideo(null)}>
+          <div className="admin-modal player-modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>{activeVideo.title}</h2>
+              <button className="close-btn" onClick={() => setActiveVideo(null)}>&times;</button>
+            </div>
+            
+            <div className="player-modal-body">
+              <VideoPlayer url={activeVideo.url} />
+              
+              <div className="player-modal-details">
+                {activeVideo.description && <p className="modal-desc">{activeVideo.description}</p>}
+                
+                {/* Banner Ad directly below player inside popup */}
+                <AdContainer 
+                  code={getAdCode('ad_under_player')} 
+                  placement="ad_under_player" 
+                  placeholderText="Under Player Ad Banner (728x90)"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Legal & Info Modals */}
